@@ -294,6 +294,8 @@ export type Scheduled = {
 
 const T_KEY = "corridorx.transfers.v1";
 const S_KEY = "corridorx.scheduled.v1";
+const W_KEY = "corridorx.wallet.v1";
+const D_KEY = "corridorx.deposits.v1";
 
 function safeRead<T>(k: string): T[] {
   if (typeof window === "undefined") return [];
@@ -330,6 +332,37 @@ export function saveScheduled(s: Scheduled) {
 export function removeScheduled(id: string) {
   const all = safeRead<Scheduled>(S_KEY).filter((x) => x.id !== id);
   localStorage.setItem(S_KEY, JSON.stringify(all));
+  window.dispatchEvent(new Event("corridorx:update"));
+}
+
+// ---- Wallet storage (local demo wallet) ----
+// A payment provider should create these records server-side before this is used for real funds.
+export type DepositMethod = "card" | "bank";
+
+export type WalletDeposit = {
+  id: string;
+  amount: number;
+  feeUSD: number;
+  method: DepositMethod;
+  createdAt: number;
+  status: "completed";
+};
+
+export function getWalletBalance(): number {
+  if (typeof window === "undefined") return 0;
+  const balance = Number(localStorage.getItem(W_KEY) ?? "0");
+  return Number.isFinite(balance) ? balance : 0;
+}
+
+export function listWalletDeposits(): WalletDeposit[] {
+  return safeRead<WalletDeposit>(D_KEY).sort((a, b) => b.createdAt - a.createdAt);
+}
+
+export function saveWalletDeposit(deposit: WalletDeposit) {
+  const deposits = safeRead<WalletDeposit>(D_KEY);
+  deposits.push(deposit);
+  localStorage.setItem(D_KEY, JSON.stringify(deposits));
+  localStorage.setItem(W_KEY, String(getWalletBalance() + deposit.amount));
   window.dispatchEvent(new Event("corridorx:update"));
 }
 

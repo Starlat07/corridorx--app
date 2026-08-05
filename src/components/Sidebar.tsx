@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import {
   LayoutDashboard,
   Send,
+  WalletCards,
   Scale,
   History,
   CalendarClock,
@@ -21,6 +22,7 @@ import { supabase } from "@/integrations/supabase/client";
 const NAV = [
   { to: "/app", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/app/send", label: "Send Money", icon: Send },
+  { to: "/app/deposit", label: "Add Funds", icon: WalletCards },
   { to: "/app/compare", label: "Compare Routes", icon: Scale },
   { to: "/app/transfers", label: "Transfer History", icon: History },
   { to: "/app/scheduled", label: "Scheduled", icon: CalendarClock },

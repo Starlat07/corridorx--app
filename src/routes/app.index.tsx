@@ -5,6 +5,7 @@ import {
   getQuotes,
   listTransfers,
   listScheduled,
+  getWalletBalance,
   formatCurrency,
   newId,
   rankQuotes,
@@ -75,11 +76,13 @@ function seedDemo() {
 function Dashboard() {
   const [transfers, setTransfers] = useState<Transfer[]>([]);
   const [scheduled, setScheduled] = useState<Scheduled[]>([]);
+  const [walletBalance, setWalletBalance] = useState(0);
 
   useEffect(() => {
     const load = () => {
       setTransfers(listTransfers());
       setScheduled(listScheduled());
+      setWalletBalance(getWalletBalance());
     };
     load();
     window.addEventListener("corridorx:update", load);
@@ -102,11 +105,16 @@ function Dashboard() {
           {transfers.length === 0 && (
             <button className="btn-ghost" onClick={seedDemo}>Load demo data</button>
           )}
+          <Link to="/app/deposit" className="btn-ghost">Add funds</Link>
           <Link to="/app/send" className="btn-primary">Start a transfer</Link>
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
+        <Link to="/app/deposit" className="card-glass p-5 transition hover:border-primary/50">
+          <div className="text-xs uppercase tracking-wide text-muted-foreground">Wallet balance</div>
+          <div className="mt-2 text-2xl font-semibold text-primary">{formatCurrency(walletBalance, "USD")}</div>
+        </Link>
         <Stat label="Total transfers" value={String(transfers.length)} />
         <Stat label="Money saved" value={formatCurrency(saved, "USD")} accent />
         <Stat label="Active scheduled" value={String(activeScheduled)} />
