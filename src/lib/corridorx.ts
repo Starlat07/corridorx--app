@@ -296,6 +296,7 @@ const T_KEY = "corridorx.transfers.v1";
 const S_KEY = "corridorx.scheduled.v1";
 const W_KEY = "corridorx.wallet.v1";
 const D_KEY = "corridorx.deposits.v1";
+const E_KEY = "corridorx.escrows.v1";
 
 function safeRead<T>(k: string): T[] {
   if (typeof window === "undefined") return [];
@@ -363,6 +364,82 @@ export function saveWalletDeposit(deposit: WalletDeposit) {
   deposits.push(deposit);
   localStorage.setItem(D_KEY, JSON.stringify(deposits));
   localStorage.setItem(W_KEY, String(getWalletBalance() + deposit.amount));
+  window.dispatchEvent(new Event("corridorx:update"));
+}
+
+// ---- Escrow milestones (local demo storage) ----
+// Production escrow requires regulated custody, KYC/AML and a server-authoritative ledger.
+export type MilestoneStatus = "draft" | "funded" | "submitted" | "released";
+export type EscrowMilestone = {
+  id: string;
+  title: string;
+  amount: number;
+  status: MilestoneStatus;
+  submittedAt?: number;
+  releasedAt?: number;
+};
+
+export type EscrowProject = {
+  id: string;
+  title: string;
+  freelancer: string;
+  destination: Country;
+  createdAt: number;
+  milestones: EscrowMilestone[];
+};
+
+export function listEscrowProjects(): EscrowProject[] {
+  return safeRead<EscrowProject>(E_KEY).sort((a, b) => b.createdAt - a.createdAt);
+}
+
+export function saveEscrowProject(project: EscrowProject) {
+  const projects = safeRead<EscrowProject>(E_KEY);
+  const index = projects.findIndex((item) => item.id === project.id);
+  if (index >= 0) projects[index] = project;
+  else projects.push(project);
+  localStorage.setItem(E_KEY, JSON.stringify(projects));
+  window.dispatchEvent(new Event("corridorx:update"));
+}
+
+export function fundEscrowMilestone(projectId: string, milestoneId: string): { ok: boolean; message?: string } {
+  const projects = safeRead<EscrowProject>(E_KEY);
+  const project = projects.find((item) => item.id === projectId);
+  const milestone = project?.milestones.find((item) => item.id === milestoneId);
+  if (!project || !milestone) return { ok: false, message: "Milestone not found." };
+  if (milestone.status !== "draft") return { ok: false, message: "This milestone is already funded." };
+  const balance = getWalletBalance();
+  if (balance < milestone.amount) return { ok: false, message: `Add ${formatCurrency(milestone.amount - balance, "USD")} to your wallet first.` };
+  milestone.status = "funded";
+  localStorage.setItem(W_KEY, String(balance - milestone.amount));
+  localStorage.setItem(E_KEY, JSON.stringify(projects));
+  window.dispatchEvent(new Event("corridorx:update"));
+  return { ok: true };
+}
+
+export function submitEscrowMilestone(projectId: string, milestoneId: string) {
+  updateEscrowMilestone(projectId, milestoneId, (milestone) => {
+    if (milestone.status === "funded") {
+      milestone.status = "submitted";
+      milestone.submittedAt = Date.now();
+    }
+  });
+}
+
+export function releaseEscrowMilestone(projectId: string, milestoneId: string) {
+  updateEscrowMilestone(projectId, milestoneId, (milestone) => {
+    if (milestone.status === "submitted") {
+      milestone.status = "released";
+      milestone.releasedAt = Date.now();
+    }
+  });
+}
+
+function updateEscrowMilestone(projectId: string, milestoneId: string, update: (milestone: EscrowMilestone) => void) {
+  const projects = safeRead<EscrowProject>(E_KEY);
+  const milestone = projects.find((item) => item.id === projectId)?.milestones.find((item) => item.id === milestoneId);
+  if (!milestone) return;
+  update(milestone);
+  localStorage.setItem(E_KEY, JSON.stringify(projects));
   window.dispatchEvent(new Event("corridorx:update"));
 }
 
