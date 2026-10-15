@@ -17,10 +17,10 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as AppAftertraceRouteImport } from './routes/app.aftertrace'
 import { Route as AppAnalyticsRouteImport } from './routes/app.analytics'
 import { Route as AppCompareRouteImport } from './routes/app.compare'
 import { Route as AppDepositRouteImport } from './routes/app.deposit'
-import { Route as AppEscrowRouteImport } from './routes/app.escrow'
 import { Route as AppProfileRouteImport } from './routes/app.profile'
 import { Route as AppScheduledRouteImport } from './routes/app.scheduled'
 import { Route as AppSendRouteImport } from './routes/app.send'
@@ -67,6 +67,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAftertraceRoute = AppAftertraceRouteImport.update({
+  id: '/aftertrace',
+  path: '/aftertrace',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAnalyticsRoute = AppAnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
@@ -80,11 +85,6 @@ const AppCompareRoute = AppCompareRouteImport.update({
 const AppDepositRoute = AppDepositRouteImport.update({
   id: '/deposit',
   path: '/deposit',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppEscrowRoute = AppEscrowRouteImport.update({
-  id: '/escrow',
-  path: '/escrow',
   getParentRoute: () => AppRoute,
 } as any)
 const AppProfileRoute = AppProfileRouteImport.update({
@@ -121,10 +121,10 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/app/aftertrace': typeof AppAftertraceRoute
   '/app/analytics': typeof AppAnalyticsRoute
   '/app/compare': typeof AppCompareRoute
   '/app/deposit': typeof AppDepositRoute
-  '/app/escrow': typeof AppEscrowRoute
   '/app/profile': typeof AppProfileRoute
   '/app/scheduled': typeof AppScheduledRoute
   '/app/send': typeof AppSendRoute
@@ -139,10 +139,10 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/app/aftertrace': typeof AppAftertraceRoute
   '/app/analytics': typeof AppAnalyticsRoute
   '/app/compare': typeof AppCompareRoute
   '/app/deposit': typeof AppDepositRoute
-  '/app/escrow': typeof AppEscrowRoute
   '/app/profile': typeof AppProfileRoute
   '/app/scheduled': typeof AppScheduledRoute
   '/app/send': typeof AppSendRoute
@@ -159,10 +159,10 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/app/aftertrace': typeof AppAftertraceRoute
   '/app/analytics': typeof AppAnalyticsRoute
   '/app/compare': typeof AppCompareRoute
   '/app/deposit': typeof AppDepositRoute
-  '/app/escrow': typeof AppEscrowRoute
   '/app/profile': typeof AppProfileRoute
   '/app/scheduled': typeof AppScheduledRoute
   '/app/send': typeof AppSendRoute
@@ -180,10 +180,10 @@ export interface FileRouteTypes {
     | '/login'
     | '/reset-password'
     | '/signup'
+    | '/app/aftertrace'
     | '/app/analytics'
     | '/app/compare'
     | '/app/deposit'
-    | '/app/escrow'
     | '/app/profile'
     | '/app/scheduled'
     | '/app/send'
@@ -198,10 +198,10 @@ export interface FileRouteTypes {
     | '/login'
     | '/reset-password'
     | '/signup'
+    | '/app/aftertrace'
     | '/app/analytics'
     | '/app/compare'
     | '/app/deposit'
-    | '/app/escrow'
     | '/app/profile'
     | '/app/scheduled'
     | '/app/send'
@@ -217,10 +217,10 @@ export interface FileRouteTypes {
     | '/login'
     | '/reset-password'
     | '/signup'
+    | '/app/aftertrace'
     | '/app/analytics'
     | '/app/compare'
     | '/app/deposit'
-    | '/app/escrow'
     | '/app/profile'
     | '/app/scheduled'
     | '/app/send'
@@ -297,6 +297,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/aftertrace': {
+      id: '/app/aftertrace'
+      path: '/aftertrace'
+      fullPath: '/app/aftertrace'
+      preLoaderRoute: typeof AppAftertraceRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/analytics': {
       id: '/app/analytics'
       path: '/analytics'
@@ -316,13 +323,6 @@ declare module '@tanstack/react-router' {
       path: '/deposit'
       fullPath: '/app/deposit'
       preLoaderRoute: typeof AppDepositRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/escrow': {
-      id: '/app/escrow'
-      path: '/escrow'
-      fullPath: '/app/escrow'
-      preLoaderRoute: typeof AppEscrowRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/profile': {
@@ -364,10 +364,10 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppRouteChildren {
+  AppAftertraceRoute: typeof AppAftertraceRoute
   AppAnalyticsRoute: typeof AppAnalyticsRoute
   AppCompareRoute: typeof AppCompareRoute
   AppDepositRoute: typeof AppDepositRoute
-  AppEscrowRoute: typeof AppEscrowRoute
   AppProfileRoute: typeof AppProfileRoute
   AppScheduledRoute: typeof AppScheduledRoute
   AppSendRoute: typeof AppSendRoute
@@ -377,10 +377,10 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAftertraceRoute: AppAftertraceRoute,
   AppAnalyticsRoute: AppAnalyticsRoute,
   AppCompareRoute: AppCompareRoute,
   AppDepositRoute: AppDepositRoute,
-  AppEscrowRoute: AppEscrowRoute,
   AppProfileRoute: AppProfileRoute,
   AppScheduledRoute: AppScheduledRoute,
   AppSendRoute: AppSendRoute,
