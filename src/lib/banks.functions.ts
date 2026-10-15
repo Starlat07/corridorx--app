@@ -39,7 +39,7 @@ async function fetchFlutterwaveBanks(country: string): Promise<Bank[] | null> {
 }
 
 export const listBanks = createServerFn({ method: "POST" })
-  .inputValidator((d: { country: string }) => z.object({ country: z.string().length(2) }).parse(d))
+  .validator((d: { country: string }) => z.object({ country: z.string().length(2) }).parse(d))
   .handler(async ({ data }) => {
     const country = data.country.toUpperCase();
     const cached = bankCache.get(country);
@@ -99,7 +99,7 @@ async function resolveWithFlutterwave(bankCode: string, accountNumber: string) {
 }
 
 export const resolveBankAccount = createServerFn({ method: "POST" })
-  .inputValidator((d: { country: string; bankCode: string; accountNumber: string }) =>
+  .validator((d: { country: string; bankCode: string; accountNumber: string }) =>
     z
       .object({
         country: z.string().length(2),
