@@ -4,11 +4,11 @@ import {
   LayoutDashboard,
   Send,
   WalletCards,
-  LockKeyhole,
   Scale,
   History,
   CalendarClock,
   BarChart3,
+  Waypoints,
   Settings,
   User as UserIcon,
   BookOpen,
@@ -24,8 +24,8 @@ const NAV = [
   { to: "/app", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/app/send", label: "Send Money", icon: Send },
   { to: "/app/deposit", label: "Add Funds", icon: WalletCards },
-  { to: "/app/escrow", label: "Safupay", icon: LockKeyhole },
   { to: "/app/compare", label: "Compare Routes", icon: Scale },
+  { to: "/app/aftertrace", label: "Aftertrace", icon: Waypoints },
   { to: "/app/transfers", label: "Transfer History", icon: History },
   { to: "/app/scheduled", label: "Scheduled", icon: CalendarClock },
   { to: "/app/analytics", label: "Analytics", icon: BarChart3 },
@@ -87,10 +87,7 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
   return (
     <>
       {open && (
-        <div
-          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
-          onClick={onClose}
-        />
+        <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={onClose} />
       )}
       <aside
         className={`fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-border bg-background transition-transform duration-200 ${
